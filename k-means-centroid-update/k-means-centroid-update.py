@@ -1,21 +1,18 @@
 import numpy as np
 
 def k_means_centroid_update(points, assignments, k):
-    """
-    Compute new centroids as the mean of assigned points.
-    """
     points = np.asarray(points, dtype=float)
     assignments = np.asarray(assignments, dtype=int)
     
     if points.ndim == 1:
         points = points[:, np.newaxis]
-        
-    d = points.shape[1]
     
-    new_centroids = np.zeros((k, d), dtype=float)
+    # assignments shape (n,), np.arange(k)[:, None] shape (k, 1)
+    mask = (assignments == np.arange(k)[:, None])  # shape (k, n)
     
-    for cluster_id in range(k):
-        
-        new_centroids[cluster_id] = np.mean(points[assignments == cluster_id], axis=0)
-
+    counts = np.sum(mask, axis=1, keepdims=True)  
+    sums = mask @ points                          
+    
+    new_centroids = np.where(counts > 0, sums / np.maximum(counts, 1), 0.0)
+    
     return new_centroids.tolist()
