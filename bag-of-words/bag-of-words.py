@@ -1,11 +1,12 @@
 import numpy as np
+from collections import Counter
 
 def bag_of_words_vector(tokens: list[str], vocab: list[str]) -> np.ndarray:
-    word_to_idx = {word: idx for idx, word in enumerate(vocab)}
-    vec = np.zeros(len(vocab), dtype=int)
+    """
+    Returns: np.ndarray of shape (len(vocab),), dtype=int
+    """
+    token_counts = Counter(tokens)
     
-    for token in tokens:
-        if token in word_to_idx:
-            vec[word_to_idx[token]] += 1
-            
-    return vec
+    vec = [token_counts.get(word, 0) for word in vocab]
+    
+    return np.array(vec, dtype=int)
